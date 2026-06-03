@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>午夜毒圈 — 一个药物过量社群的七万条消息</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+  :root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #111118;
+    --bg-card: #16161f;
+    --bg-quote: #1a1a25;
+    --text-primary: #e8e6e3;
+    --text-secondary: #9a9a9a;
+    --text-muted: #5a5a6a;
+    --accent-red: #e74c3c;
+    --accent-red-dim: rgba(231,76,60,0.15);
+    --accent-amber: #f39c12;
+    --accent-amber-dim: rgba(243,156,18,0.12);
+    --accent-cyan: #1abc9c;
+    --accent-cyan-dim: rgba(26,188,156,0.12);
+    --accent-purple: #9b59b6;
+    --accent-purple-dim: rgba(155,89,182,0.12);
+    --border-color: #2a2a35;
+    --font-serif: 'Noto Serif SC', 'Georgia', serif;
+    --font-sans: 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== HERO ========== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 80%, rgba(231,76,60,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 20%, rgba(155,89,182,0.04) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-subtitle {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.3;
+    max-width: 700px;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #e8e6e3 0%, #c0bdb8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-meta {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 1rem;
+  }
+  .hero-meta span { margin: 0 0.8rem; }
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    animation: bounce 2s ease infinite;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+  }
+  .scroll-hint::after {
+    content: '↓';
+    display: block;
+    text-align: center;
+    margin-top: 0.3rem;
+    font-size: 1.2rem;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+
+  /* ========== EPigraph ========== */
+  .epigraph {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 4rem 2rem 3rem;
+    border-left: 2px solid var(--accent-red);
+    position: relative;
+  }
+  .epigraph p {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    line-height: 2;
+    color: var(--text-secondary);
+  }
+  .epigraph .attr {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+  }
+
+  /* ========== SECTIONS ========== */
+  .section {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 2rem 3rem;
+  }
+  .section p {
+    margin-bottom: 1.6rem;
+    font-size: 1.05rem;
+  }
+  .section h2 {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 4rem 0 2rem;
+    color: var(--text-primary);
+    position: relative;
+    padding-left: 1.2rem;
+    border-left: 3px solid var(--accent-red);
+  }
+  .section h3 {
+    font-family: var(--font-sans);
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin: 2.5rem 0 1rem;
+    color: var(--accent-amber);
+  }
+
+  /* ========== REVEAL ANIMATION ========== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ========== DATA HIGHLIGHT ========== */
+  .data-highlight {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin: 2rem 0;
+  }
+  .data-card {
+    flex: 1;
+    min-width: 140px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.2rem;
+    text-align: center;
+  }
+  .data-card .number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    font-family: var(--font-sans);
+    display: block;
+  }
+  .data-card .number.red { color: var(--accent-red); }
+  .data-card .number.amber { color: var(--accent-amber); }
+  .data-card .number.cyan { color: var(--accent-cyan); }
+  .data-card .number.purple { color: var(--accent-purple); }
+  .data-card .label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.4rem;
+    line-height: 1.4;
+  }
+
+  /* ========== QUOTE BLOCK ========== */
+  .quote-block {
+    background: var(--bg-quote);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin: 2.5rem 0;
+    position: relative;
+  }
+  .quote-block::before {
+    content: '"';
+    position: absolute;
+    top: -0.3rem;
+    left: 1rem;
+    font-size: 3rem;
+    color: var(--accent-red);
+    opacity: 0.3;
+    font-family: var(--font-serif);
+  }
+  .quote-block p {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 2;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem !important;
+    white-space: pre-line;
+  }
+  .quote-block .attr {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  /* ========== CHART PLACEHOLDER ========== */
+  .chart-placeholder {
+    background: linear-gradient(135deg, var(--bg-card) 0%, #1c1c28 100%);
+    border: 1px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2.5rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .chart-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-red), var(--accent-amber), var(--accent-cyan), var(--accent-purple));
+    border-radius: 12px 12px 0 0;
+  }
+  .chart-placeholder .chart-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-amber);
+    margin-bottom: 0.8rem;
+  }
+  .chart-placeholder .chart-title {
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+  .chart-placeholder .chart-desc {
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+  }
+  .chart-placeholder .chart-desc strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .chart-placeholder .chart-icon {
+    float: right;
+    font-size: 2rem;
+    opacity: 0.15;
+    margin-left: 1rem;
+  }
+
+  /* ========== DIVIDER ========== */
+  .divider {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+  }
+  .divider::after {
+    content: '';
+    display: block;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+  }
+  .divider .section-num {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-primary);
+    padding: 0.3rem 1rem;
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+  }
+
+  /* ========== INLINE MESSAGE ========== */
+  .inline-msg {
+    background: var(--bg-quote);
+    border-left: 3px solid var(--accent-red);
+    padding: 0.8rem 1.2rem;
+    margin: 1.5rem 0;
+    font-family: var(--font-sans);
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    border-radius: 0 6px 6px 0;
+  }
+
+  /* ========== FOOTNOTE ========== */
+  .footnote {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-top: 0.5rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--border-color);
+  }
+  .footnote a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+  }
+  .footnote a:hover { text-decoration: underline; }
+
+  /* ========== FULLWIDTH SECTION ========== */
+  .fullwidth-section {
+    padding: 4rem 2rem;
+    background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+  }
+  .fullwidth-section .inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* ========== CONCLUSION ========== */
+  .conclusion {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  .conclusion h2 {
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    border-left: 3px solid var(--accent-amber);
+    padding-left: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  .conclusion h3 {
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--accent-cyan);
+    margin: 2.5rem 0 0.8rem;
+  }
+
+  /* ========== FOOTER ========== */
+  footer {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+    border-top: 1px solid var(--border-color);
+  }
+  footer p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* ========== PROGRESS BAR ========== */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-red), var(--accent-amber));
+    z-index: 1000;
+    transition: width 0.1s linear;
+  }
+
+  /* ========== NAV ========== */
+  .top-nav {
+    position: fixed;
+    top: 0;
+    right: 2rem;
+    z-index: 999;
+    padding: 0.8rem 1.2rem;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 0 0 8px 8px;
+    border: 1px solid var(--border-color);
+    border-top: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .top-nav.show { opacity: 1; }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 768px) {
+    .data-highlight { gap: 0.8rem; }
+    .data-card { min-width: 100px; padding: 1rem; }
+    .data-card .number { font-size: 1.4rem; }
+    .epigraph { padding: 3rem 1.5rem 2rem; }
+    .section, .conclusion, footer { padding-left: 1.2rem; padding-right: 1.2rem; }
+    .chart-placeholder { padding: 1.5rem; }
+    .quote-block { padding: 1.2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<div class="top-nav" id="topNav">午夜毒圈</div>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <div class="hero-subtitle">数据新闻 · 深度调查</div>
+  <h1>一个药物过量社群的<br>七万条消息</h1>
+  <p style="max-width:560px;color:var(--text-secondary);font-size:0.95rem;line-height:1.9;">
+    在 Telegram 上，一个名叫 OverdoseWiki 的群组里，943 个人在八个月内发出了 74,434 条消息。<br>这是一条一条读过去之后，我们所看到的。
+  </p>
+  <div class="hero-meta">
+    <span>数据来源：OverdoseWiki Telegram 群组</span>
+    <span>2025.09 — 2026.05</span>
+  </div>
+  <div class="scroll-hint">向下滚动</div>
+</section>
+
+<!-- ==================== EPIGRAPH ==================== -->
+<div class="epigraph reveal">
+  <p>"深夜的孤寂早已把理智消磨得不剩分毫。
+不经思考地抓起药盒，五六片，可能七八片，从煎熬，焦躁变得平静，虚弱。
+意识渐渐模糊，可能只遗留了呼吸的力气。忘记拉上的窗帘和窗外那一片不会灭的灯光成为我眼中定格整夜的美景……"</p>
+  <div class="attr">——匿名用户，2025-10-03T23:59:56</div>
+</div>
+
+<!-- ==================== INTRO ==================== -->
+<section class="section">
+  <div class="reveal">
+    <p>九月的一个深夜，OverdoseWiki 群组里，一条消息弹出来：</p>
+    <div class="inline-msg">"刚刚吃了6t 晚安。"</div>
+    <p>发消息的人没有显示用户名。六片药，一句晚安。群组里没有人追问——吃了什么，多少毫克，人没事吧。"晚安"在这个语境里是一种暗语：服药者即将失去意识，而群友们的沉默本身就是一种应答。</p>
+    <p>这个 Telegram 群组有 943 个成员，从 2025 年 9 月到 2026 年 5 月，他们发出了 74,434 条消息。74,434 条。我一条一条读过去的时候，最常看到的时间戳是凌晨一点、两点、三点。0 到 5 点之间产生了 23,649 条消息，占全天消息量的三分之一。深夜是这群人最清醒的时候。</p>
+  </div>
+
+  <!-- CHART 1 -->
+  <div class="chart-placeholder reveal">
+    <div class="chart-icon">📊</div>
+    <div class="chart-label">图表 1-1</div>
+    <div class="chart-title">24 小时消息量分布</div>
+    <div class="chart-desc">
+      <strong>类型：折线图</strong>　X 轴 0–23 点，Y 轴消息数量。<br>
+      展示全天消息量分布曲线，突出 <strong>0–5 点合计 23,332 条（31.3%）</strong>和<strong>20–23 点合计 18,135 条</strong>两个高峰。最高点为凌晨 1 点（5,941 条），低谷为 8 点（1,040 条）。用暗红渐变填充折线下方区域，0–5 点区域加高亮底色。
+    </div>
+  </div>
+
+  <div class="reveal">
+    <p>如果把这 74,434 条消息摊开来看，它们并不是人们想象中的"猎奇聊天"。</p>
+    <p>群组里最常出现的，不是极端事件，而是大量重复、琐碎、持续发生的日常交流。有人讨论剂量，有人比较不同药物的效果，有人询问哪里还能买到药，有人分享自己刚刚出现的幻觉、呕吐、耳鸣和呼吸困难，也有人在凌晨两三点反复倾诉情绪崩溃、自残冲动与失眠。</p>
+  </div>
+
+  <div class="data-highlight reveal">
+    <div class="data-card"><span class="number red">3,005</span><span class="label">药效·副作用·<br>身体反应</span></div>
+    <div class="data-card"><span class="number amber">2,412</span><span class="label">情绪·心理状态·<br>自杀倾向</span></div>
+    <div class="data-card"><span class="number cyan">2,206</span><span class="label">具体剂量分享</span></div>
+    <div class="data-card"><span class="number purple">1,126</span><span class="label">实时OD播报</span></div>
+    <div class="data-card"><span class="number red">357</span><span class="label">求助·求救</span></div>
+  </div>
+
+  <!-- CHART 2 -->
+  <div class="chart-placeholder reveal">
+    <div class="chart-icon">🥧</div>
+    <div class="chart-label">图表 2</div>
+    <div class="chart-title">V2 分类标签构成</div>
+    <div class="chart-desc">
+      <strong>类型：环形图（Donut Chart）</strong><br>
+      按占比从大到小：其他(52.29%)、生活社交闲聊(23.94%)、问答_疑问(10.24%)、药物名称提及(6.44%)、药效副作用讨论(4.04%)、煽动_美化(3.53%)、情绪心理讨论(3.24%)、剂量分享(2.96%)……将<strong>药品交易、实时OD播报、求助、死亡_自残</strong>等危险标签合并为"危险信号"区域（合计 3.39%），用深红色弧段突出。环形中心显示总消息数 74,434。
+    </div>
+  </div>
+
+  <div class="reveal">
+    <p>这些内容并不是彼此割裂的。</p>
+    <p>一个人上一秒还在询问"最舒服的自杀方式是什么"，下一秒群里已经开始讨论"愈美片哪里买便宜"；有人刚刚描述完"呼吸暂停被送进 ICU"，接下来的回复却是"下次记得控制剂量"；有人深夜崩溃地说"谁可以帮帮我"，聊天窗口很快又被新的药物搭配方案覆盖过去。</p>
+    <p>在七万多条消息里，药物、情绪、社交、自残、购物、知识分享和求救被压缩进同一个不断滚动的聊天界面里，没有明显边界。</p>
+    <p>这里既像一个匿名论坛，也像一个互助群；既有药理学讨论、剂量计算、戒断经验，也充满了玩笑、表情包、二次元梗和深夜情绪独白。有人把它当成"百科"，有人把它当成"树洞"，也有人把它当成现实生活之外唯一还能说话的地方。</p>
+    <p>而当所有内容同时出现时，"危险"本身反而逐渐失去了边界感。</p>
+    <p>过量、幻觉、洗胃、昏迷，不再总是被视为需要阻止的事情，而是像一种可被分享、比较、积累经验的数据。群组里的知识生产也因此形成了某种循环：有人分享体验，有人整理剂量，有人转发 Wiki，有人继续尝试，再把新的体验重新发回群组。</p>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">一</span></div>
+
+<!-- ==================== SECTION 一 ==================== -->
+<section class="section">
+  <div class="reveal">
+    <p>九月二十七号傍晚六点二十五分，一个叫"e"的用户发了条消息："刚吃右美600mg"。右美沙芬，一种止咳药的有效成分，在医学剂量下每次不超过 120mg。600mg 是医嘱上限的五倍。"e"没有再说别的。过了半个多小时，又发了一条："感觉听外面人说话好清楚"。再过几分钟："脑子变成单线程了"。</p>
+    <p>同一天晚上，用户"-0111·"问了个问题："🙋🏻‍♂️礼貌提问，8t普瑞怎么没有感觉呀🤔"。八片普瑞巴林，至少 600mg。他觉得没感觉。</p>
+    <p>用户"หมี Karst"回了两条："150直接30t"，"8t小朋友"。</p>
+    <p>八片被叫"小朋友"。三十片是正常推荐量。</p>
+    <p>这类数字在群组里到处都是。十月三日，"Mo CCC"说："我现在起码24t才能爽一爽"。十月十四日，"Zebulon Mika"说自己的日常剂量是一天 32t——75mg 规格的普瑞巴林，整整一盒，吃了一年。他还算有节制："有的时候会休息一两天，然后再接着o"。</p>
+    <p>剂量分享类消息一共 2,206 条。二十片及以上的有 468 条，其中五十片以上的 125 条。一个人说下了 770t 右美沙芬的订单——770 片，一个鞋盒都装不下。</p>
+    <p>没有人觉得这有什么不对。十月十三号，用户"残梦"直接建议："可以试试36t愈美+12t苯海拉明，很奇妙的组合"。三十六片愈美片加十二片苯海拉明，两种中枢神经系统药物叠在一起。他说"奇妙"。</p>
+  </div>
+
+  <!-- CHART 3 -->
+  <div class="chart-placeholder reveal">
+    <div class="chart-icon">📊</div>
+    <div class="chart-label">图表 3</div>
+    <div class="chart-title">剂量分布直方图</div>
+    <div class="chart-desc">
+      <strong>类型：直方图</strong><br>
+      X 轴剂量分段：≤5 片 | 6–10 片 | 11–19 片 | 20–29 片 | 30–49 片 | 50–99 片 | ≥100 片。Y 轴消息数量。<br>
+      用渐变红色柱体，随剂量增大颜色越深。标注 <strong>20 片以上 468 条（21.2%）</strong>和<strong>50 片以上 125 条（5.7%）</strong>的极端数据。右侧标注医学剂量参考线（120mg 右美沙芬 ≈ 2–3 片）。
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">二</span></div>
+
+<!-- ==================== SECTION 二 ==================== -->
+<section class="section">
+  <div class="reveal">
+    <p>这群人怎么买到药的？</p>
+    <p>九月二十七号，一位没有显示用户名的成员随口说了一句："12块钱买了120t的加巴喷丁"。十二块钱，一百二十片处方药。另一位接话："虽然是一盒24t只要8块也还好了"——八块钱一盒愈美片。十月二日，"時雨 リアン"说："17块左右就可以有150mgx32的普瑞"。普瑞巴林，精神类处方药，十七块三十二片。</p>
+    <p>处方药怎么买到的？群里有答案。</p>
+    <p>十月十九号，用户"安非tamin3"说："我的精一精二，全是想办法，搞鬼点子，骗来的红处方"。精一精二是指精神药品第一类、第二类处方，红处方是专用处方笺。他用"搞鬼点子"三个字，轻飘飘的。</p>
+    <p>还有更系统的办法。群组生态中存在专门的"处方频道"，提供 P 图伪造的处方单。涉及处方获取和伪造方法的消息有 179 条。有人问"pr咋买啊，没处方"，回答是"点我头像看我频道"——频道里有 P 好的处方。</p>
+    <p>处方频道被 Telegram 封禁过一次。有人问："那个发处方的频道咋炸掉了啊😿"。但频道很快重建，继续服务。</p>
+    <p>更深的还有"开户频道"——提供他人身份证信息用于开具处方。有人问："话说，拿开户频道里面的身份证开处方行不行？"另一个人说："我用宇将军身份证买的pr到了"。社工库在群里被公开讨论："社工库一堆呢"。开盒、隐私、人肉类消息一共 119 条。群组里甚至出现过完整的身份证号加手机号加支付宝三要素信息——姓名、身份证号、手机号全部暴露在几百人面前。</p>
+    <p>愈美片不需要处方，这是另一条通路。九月二十八号，"Ge Mo"说："不好买，也就愈美不要处方😅"。十月七号，"残梦"在群里直接分享了淘宝"美国直邮"Delsym 止咳糖浆的购买链接，发了两次。同一天，"破局"说："那都不如买日本的右美了"。</p>
+    <p>当国内某个渠道被管控收紧后，群里的人会迅速转向其他渠道。国内买不到就去日本，日本买不到就找美国代购。跨境和代购购药相关消息 60 条，涉及日本、美国、欧洲多条线路。</p>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">三</span></div>
+
+<!-- ==================== SECTION 三 ==================== -->
+<section class="section">
+  <div class="reveal">
+    <p>这个 Telegram 群组本身，是 OverdoseWiki 推特账号的附属聊天社群。od-wiki.com、freeodwiki.org 和 overdose.day 是这一体系下衍生出的配套网站，构成了一个以社交媒体账号为核心、向外延伸出聊天群组与知识库网站的完整内容生态。在 74,434 条消息里，"wiki说""看wiki"类引用出现了 353 次。</p>
+    <p>群主"OverdoseWiki"在群里只发过 44 条消息，占比 0.06%。他最常说的一句话是让人去看 Wiki。九月三十号，"Otis"在群里连续发出求救信息："后面直接感觉自己要死了"，"OverdoseWiki 救命"。群主的回复是："仔细看看这两篇，下次别作死"，附了两个 Wiki 链接。</p>
+    <p>还有一次他说："熬过去就好了，或者苯海索/劳拉西泮少吃一点就ok"。再有一次："解离会重塑认知"。</p>
+    <p>知识引用替代了危机干预。所有的问题都被框定为"信息不足"，而不是"需要帮助"。</p>
+    <p>Wiki 上甚至提供了药物搭配的公式："将右美沙芬的原先剂量减半，并服用减半后再次减半剂量的金刚烷胺。这可以提供与原先剂量相等的解离，公式为：d0×DXM = (1/2)d0 × DXM + (1/4)d0 × ATD"。</p>
+    <p>这段公式的核心意思，用白话说是：通过加入第二种药物（金刚烷胺），可以用更低剂量的右美沙芬达到原来的效果。具体来说，d0 × DXM = 原本单独使用右美沙芬的剂量，公式右边 = 将右美沙芬减半，同时加入四分之一原剂量的金刚烷胺（ATD）。其背后的药理逻辑是：金刚烷胺作为增效剂，可以放大右美沙芬的解离效果，因此两者叠用时总剂量可以更低，却声称能维持"相同体验"。</p>
+    <p>用户"DXMMMMMM"在群里一共发了 852 条消息，是群组最活跃的成员之一。她自己说她的角色是"收集用药报告，整理后提交OD Wiki"："不介意的话直接在群里发出来，我会做整理。如果介意的话私聊也OK"，"一般来说我设想的是给od wiki提交pr"。她建立了一个准学术化的知识生产流程——群里采集体验报告，整理后提交 Wiki，Wiki 再被引用为权威，新用户基于 Wiki 信息行动。</p>
+    <p>十二月十八号，用户"時雨 リアン"在群里发了一段关于普瑞巴林药理机制的详细说明："普瑞巴林虽然是GABA的结构类似物，但并不直接结合GABA受体，而是高亲和力地结合于电压门控钙通道（VGCC）的α2δ-1辅助亚基"。然后解释 P 物质与阿片系统的关系，再分享用加巴喷丁替代普瑞巴林缓解戒断反应的方法，最后引用美沙酮戒断海洛因的类比来论证原理。</p>
+    <p>科学口吻。完整的药理逻辑。群组里的人信任这类发言。但一个新人读到"300-600mg是主观爽点"这样的信息，他获得的是一个具体的剂量参考线——他知道自己该吃多少了。</p>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">四</span></div>
+
+<!-- ==================== SECTION 四 ==================== -->
+<section class="section">
+  <div class="quote-block reveal">
+    <p>"右美沙芬带来的快感，让我彻底沉沦。我开始偷偷增加剂量，从20片到30片，甚至尝试36片的极致体验。现实被撕裂，我的灵魂脱离身体，进入一个光怪陆离的异世界。墙壁在流动，声音带着回响，我感觉自己掌控了一切。有一次，我甚至'看见'晓星就站在水潭边，微笑着对我伸出手，空气中那股栀子花香是如此真实。直到药效退去，我才发现眼角早已湿透。
+
+为了逃避现实的痛苦，我不再熬夜复习，而是把所有时间都用来研究剂量，计算如何达到更强烈的效果。我在网上搜索'嗑药经验'，加入了一个匿名的QQ群。在那里，我认识了一个叫小雨的女孩。
+
+她每天都在群里分享'OD（过量服药）'的体验，言语大胆而迷幻。她说：'嗑药的时候，你会觉得自己是宇宙的中心。'她的描述让我既好奇又心动。
+
+小雨和我惊人地相似，都在用药物逃避现实。她的生活一片混乱，父母离异，学业荒废。她从不劝我戒断，反而鼓励我'再爽一次'，她说药物是她唯一的出口。晓星偶尔从朋友那里得知我的状态，会发来很长很长的消息，劝我去看医生，说她相信我能变好。可当时的我，早已被药物控制，满脑子都是下一次'飞翔'。
+
+我冷漠地回复她：'药效里才是幸福，现实有什么意义？'"</p>
+    <div class="attr">——匿名用户，2026-01-06T18:19:51</div>
+  </div>
+
+  <div class="reveal">
+    <p>十月三号晚上十点零一分，一位没有显示用户名的成员说："不管了，反正对外的正常生活维持不了了就去死就好了"。一分钟后，又一条："反正od也只是因为暂时不想死的选择罢了"。</p>
+    <p>OD 被定义为延后死亡的方式。不是寻求帮助，是按下暂停键。</p>
+    <p>同一天，"Atlantic Ocean星星"问："想自杀怎么办"。十月六号，"Violet🍥🏳️‍🌈"说："我想自杀"。同一天，"od od"说："想自杀，还不如先快乐，整点"。十月七号，"e"问："最舒服的自杀方式是什么"。</p>
+    <p>死亡/自残类消息 398 条。情绪心理讨论 2,412 条。</p>
+    <p>十月三号，用户"DXMMMMMM"在讨论自残行为时说："刚好自残是经典的泄压手段"。另一位成员说："因为自残是最能感受到对自己的掌控感的办法吧"。</p>
+    <p>十月四号，"msh usd"说："希望药效发作的时候不会被我家里人发现，不然又得给我送医院了"。"送医院"是需要避免的糟糕事。</p>
+    <p>当有人真的发出求救信号时，群组的回应是什么样的？</p>
+  </div>
+
+  <!-- CHART 6-2 -->
+  <div class="chart-placeholder reveal">
+    <div class="chart-icon">🥧</div>
+    <div class="chart-label">图表 6-2</div>
+    <div class="chart-title">求助消息后的标签分布</div>
+    <div class="chart-desc">
+      <strong>类型：饼图</strong><br>
+      统计 109 条含"救命/帮帮我/不想活"等关键词的求助消息后 5 条消息的标签分布：<strong>其他(254, 38%)</strong>、生活社交闲聊(127, 19%)、问答_疑问(76, 11%)、药物名称提及(38, 6%)、煽动_美化(29, 4%)、药效副作用讨论(24, 4%)、情绪心理讨论(22, 3%)、剂量分享(20, 3%)、死亡_自残(20, 3%)……<br>
+      "救命"被无缝接入日常话题——其他+闲聊占比合计约 57%。
+    </div>
+  </div>
+
+  <div class="reveal">
+    <p>九月二十七号傍晚六点四十三分，一位成员发了两个字："救命"。紧跟着的下一条消息是："网上买愈美有没有便宜点的商家"。再下一条："虽然是一盒24t只要8块也还好了"。再下一条："吃起来恶心，不买"。</p>
+    <p>"救命"被无缝接入了购药价格的讨论。</p>
+    <p>十月五号清晨，用户"komimoe🍥"在群里发了一段很长的消息，讲自己回到原生家庭后精神崩溃的经历。她的妈妈私自翻看了她的行李箱，找到了她的止咳药。她怀疑母亲偷走了她的日记本，被害妄想发作，怀疑家人要把她送去戒毒所。她写道："我想要有人陪伴我，安慰我，帮我渡过这次危机"。然后："我一直在哭，一直在哭，找了好多人安慰我，我一直在哭，哭到累了睡过去了然后醒来过后现在我还在哭"。最后一句是："谁可以帮帮我"。</p>
+    <p>求助类消息 357 条。32 条明确的"救命/帮帮我/不想活了"类消息中，典型的回应模式是漠然和调侃。</p>
+    <p>群组里没有自动的安全提醒，没有危机热线的引导信息，没有"如果你正在经历困难请拨打XX"的自动回复。管理 Bot 的功能列表里有"扔瓶中信""抽群友老婆""来点色图"，没有任何安全保护相关的命令。</p>
+  </div>
+
+  <!-- CHART 6-1 -->
+  <div class="chart-placeholder reveal">
+    <div class="chart-icon">📈</div>
+    <div class="chart-label">图表 6-1</div>
+    <div class="chart-title">危险信号 24 小时分布</div>
+    <div class="chart-desc">
+      <strong>类型：堆叠面积图</strong>　X 轴 0–23 点，Y 轴消息数量。<br>
+      三条数据线：<strong style="color:#e74c3c">死亡_自残</strong>（凌晨 1 点峰值 53 条）、<strong style="color:#f39c12">求助</strong>（20 点峰值 27 条）、<strong style="color:#9b59b6">实时OD播报</strong>（0 点峰值 89 条）。<br>
+      用半透明面积堆叠，突出凌晨 0–3 点三条线交汇的危险时段。
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">五</span></div>
+
+<!-- ==================== SECTION 五 ==================== -->
+<section class="section">
+  <div class="quote-block reveal">
+    <p>"我们不要过正常生活了，我们去租个一个月不过千、没电梯的破烂串串房，我们手握手一起od，我们闭着眼躺在床上吃致幻剂，我们在马路边上互相帮对方割手，我们去药店买甘草片一起阿片类成瘾，走向毁灭的不归路，我们一起因为吃愈美片被抓进派出所，因为咬紧口供被放出来，我们手握着手一起在毒品的幸福和幻觉里从楼顶一跃而下吧。"</p>
+    <div class="attr">——CSHLYR，2026-01-19T20:24:51</div>
+  </div>
+
+  <div class="reveal">
+    <p>十月十三号下午两点半左右，一位没有显示用户名的成员发了一条消息："记录解离，全身一动不动麻麻的。脑麻痹沉浸的耳鸣铺成底噪，连呼吸都变成费力沉重。思维脱离肉体，然后任何情绪都消失不见，瞳孔扩大放空良久…"。</p>
+    <p>这是实时播报。人在药物作用下，手指还在屏幕上打字，把正在发生的事情同步到群组里。</p>
+    <p>这类消息一共 1,126 条。九月二十七号，"into deep"说："昨天抱着马桶吐了一个晚上，血都吐出来了"。十月一号，"fly bug"说："打不出来就说明药效要来了"。十月十四号，"一只爱吃好吃的小猫咪"发了四个字："我在解离"。</p>
+    <p>这些人在药物作用下失去意识之前，做的最后一件事是在群里发一条消息。好像说出来了，就有人知道了。有人知道了，就不算独自一人。</p>
+    <p>但他们得到什么样的回应？</p>
+    <p>十月一号，"gintoki sakata"说："我不想进医院了洗胃太难受了"。十月七号，"残梦"说："洗胃的滋味是真不好受"。十月十七号，"WyEdNnDeYw wendy"说："上次吞40tpr直接干谵妄了呼吸暂停被父母拉上120，脑雾发作在医院坦白自己嗑药了😭"。</p>
+    <p>昏迷 55 次，洗胃 30 次，进 ICU 16 次。过量事件经历的消息里，几乎没有一条的结论是"这很危险，请不要这样做"。它们被当作经验来分享——"洗胃不好受"，所以下次别吃到需要洗胃的量。而不是别吃。</p>
+  </div>
+
+  <!-- CHART 4 -->
+  <div class="chart-placeholder reveal">
+    <div class="chart-icon">☁️</div>
+    <div class="chart-label">图表 4</div>
+    <div class="chart-title">过量事件关键词词云</div>
+    <div class="chart-desc">
+      <strong>类型：词云图</strong>（暗色背景，红色系渐变）<br>
+      关键词及频次：<strong>120(97)</strong>、过量(67)、<strong>昏迷(55)</strong>、中毒(50)、<strong>洗胃(30)</strong>、ICU(16)、急诊(14)、送医(11)、呼吸暂停(9)、抢救(8)。<br>
+      "120"和"过量"字体最大，洗胃次之。用深红→暗红渐变，越频繁的词颜色越亮。
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">六</span></div>
+
+<!-- ==================== SECTION 六 ==================== -->
+<section class="section">
+  <div class="reveal">
+    <p>群里有多少孩子？</p>
+    <p>九月二十七号，"红酒酒"说："开专的除了学生我也实在想不到还有啥目的了"。"专"指的是"专注达"——盐酸哌甲酯缓释片，学名是一类精神药品，适应症为注意缺陷与多动障碍（ADHD）。但在一些家长眼中，它是能提升孩子成绩的"聪明药"。他们或通过非正规渠道购买，或让孩子伪装出多动症症状来获取处方。正因为这类问题，专注达目前已受到最严格的精神药品管控。"红酒酒"的话，意思是：在这个群组里专门去开专注达处方的，除了被家长逼着吃药、或自己想靠它应付高压学业的学生，他想不出还有谁。</p>
+    <p>九月二十八号，"风"说："钱被家长管控了，嗑药被发现了，药全被没收了"。</p>
+    <p>十月三号，"Xena White"问："你们在学校o过吗"。同一天，"Mo CCC"说："感觉很多人从初中开始就有问题了"，"我认识的大部分就是初中开始有问题的"。另一位成员说："我上次自残还是高中"。</p>
+    <p>十月十三号，"风"提到一个涉案金额 10800 的诈骗案，说："问题是对方未成年"。"破局"回："16岁以上也犯刑事责任"，"16以下确实拿他没办法"。"风"说："15"。</p>
+    <p>十月十七号，"Hendrik Waverley"在群里说了一段话："我不知道但是我是怎么，何种心态接受这个消息的😂我想过自杀，想过跳楼，或者什么，但是我只是觉得活着，我还是想活着，家里还有父母，人生不过最多100年，我已经虚度光阴了4/1了，我不想让我的父母白发人送黑发人"。</p>
+    <p>十月四号，"🍥红豆🍥red bean🏳️‍🌈"描述了自己被送进矫正学校的经历："阴性症状他们就不管不理反正也不伤人什么的阳性症状就不一样了当时给我送矫正学校跑完三千米还集体训话不知道哪触动了发作砸床掀桌子椅子闹办公室跑校长办公室去跟我分了个单独的屋锁上让我别训练了看看书哈哈哈"。</p>
+    <p>未成年相关消息 662 条。"高中"出现 61 次，"初中" 46 次，"未成年" 37 次，"高考" 17 次，"16岁" 11 次，"15岁" 10 次。</p>
+    <p>群组没有年龄验证机制。一个十五岁的孩子进群后，面对的是一套完整的操作指南——从伪造处方到电商平台购药到剂量计算。他的第一个问题会是"怎么买"，而不是"这危险吗"。群组的信息环境已经预设了"你会做这件事"的前提。</p>
+  </div>
+
+  <!-- CHART 7 -->
+  <div class="chart-placeholder reveal">
+    <div class="chart-icon">☁️</div>
+    <div class="chart-label">图表 7-1</div>
+    <div class="chart-title">未成年相关话题关键词</div>
+    <div class="chart-desc">
+      <strong>类型：词云图</strong>（暗色背景，琥珀色系渐变）<br>
+      关键词频次：<strong>高中(61)</strong>、<strong>初中(46)</strong>、未成年(37)、高考(17)、16岁(11)、15岁(10)、家长、学校、矫正、戒断……<br>
+      用暖色（琥珀→橙）突出，与全文红色系区分。
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">七</span></div>
+
+<!-- ==================== SECTION 七 ==================== -->
+<section class="section">
+  <div class="reveal">
+    <p>群组的名字叫"OverdoseWiki"——过量百科。群主账号也叫"OverdoseWiki"，是群组唯一可见的管理员。但他在 7 万多条消息里只发了 44 条。</p>
+    <p>群组记录里反复置顶着一条公告："AnYan，uid: 6695139707，前OverdoseWiki群组管理员。此人在被警方调查期间报复社会，踢出OverdoseWiki群组内所有人并删除记录。有此人非法求购药品的相关证据材料可以提交，本人代为转交其居住地上海市某区禁毒。"</p>
+    <p>这条公告在九月二十六号和十月一号被置顶了至少两次。它说明三件事：前管理员被警方调查了，群组记录曾被刻意销毁，当前可见的 7 万多条消息只是群组完整历史的一部分。</p>
+    <p>群组里有个 Bot，叫 kmuav2bot，功能挺丰富的。"扔瓶中信"用了 192 次，"捡瓶中信"用了 176 次，"抽群友老婆" 79 次，"来点色图" 47 次。瓶中信是个匿名社交功能，你扔出一条匿名消息，别人捡到后可以阅读和回复。368 次使用，说明这个功能是活跃的。</p>
+    <p>Bot 相关消息一共 724 条。但 Bot 的功能列表里没有任何与安全相关的命令。</p>
+    <p>群组没有明确的行为规范，"规则"相关消息只有 12 条。管理或封禁相关消息只有 66 条。九百多人，七万多条消息，没有人负责。</p>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">八</span></div>
+
+<!-- ==================== SECTION 八 ==================== -->
+<section class="section">
+  <div class="reveal">
+    <p>943 个发言者里，32 个人发了 500 条以上消息，合计 35,590 条，占了全部消息的 47%。近一半的声音来自 3.4% 的人。</p>
+    <p>一个新人进群，看到的基本上就是这 32 个人的发言。</p>
+  </div>
+
+  <!-- CHART 5-1 -->
+  <div class="chart-placeholder reveal">
+    <div class="chart-icon">🥧</div>
+    <div class="chart-label">图表 5-1</div>
+    <div class="chart-title">用户活跃度分层</div>
+    <div class="chart-desc">
+      <strong>类型：环形图（Donut Chart）</strong><br>
+      <strong>核心层（500+）</strong>：32 人，35,590 条（47.8%）— 深红色<br>
+      活跃层（50–499）：197 人，31,958 条（42.9%）— 琥珀色<br>
+      一般层（10–49）：230 人，5,578 条（7.5%）— 青色<br>
+      潜水（＜10）：392 人，1,308 条（1.8%）— 灰色<br>
+      中心显示"3.4% 的人发出了 47.8% 的消息"。
+    </div>
+  </div>
+
+  <div class="reveal">
+    <p>其中有一类人，用"专业"口吻分享药理知识。另一类人，直接在群里发布药品广告和价格。还有一类人，运营着独立的 Telegram 频道，在群内引流。再有一类人，以第一人称分享用药体验。最后一类是新人，发言不到十条，进群就问"怎么买"。</p>
+    <p>"残梦"属于频道运营者那一类。他在群里发了 708 条消息，其中 37 条涉及交易，32 条涉及知识，7 条涉及频道推广。十月七号，他一口气发了好几条外部资源链接——erowid.org 上关于右美沙芬的 FAQ，PsychonautWiki 的条目，Reddit 上的使用指南——然后又发了淘宝美国直邮 Delsym 止咳糖浆的购买链接，发了两次。</p>
+    <p>他建议别人"可以试试36t愈美+12t苯海拉明，很奇妙的组合"。</p>
+  </div>
+
+  <!-- CHART 5-2 -->
+  <div class="chart-placeholder reveal">
+    <div class="chart-icon">📊</div>
+    <div class="chart-label">图表 5-2</div>
+    <div class="chart-title">核心用户类型分布</div>
+    <div class="chart-desc">
+      <strong>类型：堆叠横向柱状图</strong><br>
+      Y 轴：Top 32 用户（按发帖量降序），X 轴消息数量。<br>
+      每根柱体按标签类型着色：<strong style="color:#e74c3c">药品交易</strong>、<strong style="color:#f39c12">剂量分享</strong>、<strong style="color:#9b59b6">煽动_美化</strong>、<strong style="color:#1abc9c">经验分享</strong>、生活社交闲聊等。<br>
+      一眼可见各核心用户的角色差异——谁偏交易，谁偏知识，谁偏社交。
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">九</span></div>
+
+<!-- ==================== SECTION 九 ==================== -->
+<section class="section">
+  <div class="reveal">
+    <p>人们对物质使用的普遍看法并不符合任何客观现实，而是经过数千年不断变化的文化习俗的纠缠，就像地壳运动使沉积层断裂一样。要让我们的世界与改变精神状态的物质建立健康的关系，以公正和富有成效的方式对待它们，以客观的眼光看待这些令人烦恼的化学物质，需要从根本上对一切进行重组。</p>
+    <p>每个人都听过这样的抱怨：我们社会中最常见的药物，却是最强烈、最独特地使人丧失能力的药物。有一种药物，过量服用会致死，会使人产生身体依赖，一旦戒断可能会致命，还会煽动暴力，引发共病精神疾病，给社会带来巨大危害。我无意将我们习以为常的酒精当作替罪羊，但它足以说明我们对改变的看法是多么荒谬和脱离实际。</p>
+  </div>
+  <div class="reveal" style="font-size:0.82rem;color:var(--text-muted);text-align:right;margin-bottom:2rem;">——匿名用户，2026-01-05T21:38:10</div>
+
+  <div class="reveal">
+    <p>十月十二号凌晨，用户"Mo MoMo"在群里发布了一条用药指南："你是否还在为pr需要前6后2禁食而感到担忧？不用怕！这里有方法！首先购买pr80口服溶液（2%剂型），然后购买一次性小量杯和一次性塑料加样器或针筒，然后适度润滑，进入肛门推活塞，没流出来就算成功（如果没信心可以稀释，这样一次损失不会很多）。这样起效约会快30%，峰值药力更高，且经尝试不会灼伤粘膜。赶快来试试吧！"</p>
+    <p>直肠给药的完整教程，在几百人的群里公开发布。</p>
+    <p>十月十三号，"风"发布了司来吉兰+苯乙胺的组合方案，附上了 overdose.day 的链接。"破局"问："苯乙胺吃完头痛怎么办"。"Anonymous"答："高血压干的），吃降压药"。十月十三号，"风"分享自己的剂量："我第一次1t+800mg，感觉很普通"。</p>
+    <p>十二月三号，"魔優里 サヴァナ"说："最近發現一個非常好的組合，0.5t 氟伏沙明+ 25ug LSD。60kg 體重。但是千萬不能提高用量，尤其是氟伏沙明。提高任意一個用量都會迅速拉高血清素綜合症風險到 100%，正體驗完全消失"。效果呢？"效果大概是一鍵清除所有負面情緒，以及性體驗x5，而且沒有 lsd 特有的兩週以上的 cd"。</p>
+  </div>
+
+  <div class="quote-block reveal">
+    <p>"现代社会，学习压力，工作压力，焦虑，苦闷，不开心等情绪中，甚至患上了抑郁症。笑一笑十年少，好心情对健康真的很重要……这是一种全新的生活态度，即彻底摆脱对身体的局限与限制。通过直接刺激人体神经系统，让人感受到独特而强烈的娱乐、艺术、音乐和情感体验。化学极乐不仅能够改变人的感知和意识，还可以让人们具备类似于超能力的能力，如超速反应、快速学习、自我进化等……化学极乐成为当前公民们的一种时尚和奢侈品……"</p>
+    <div class="attr">——化学极乐TV🔯，2025-11-06T13:15:48</div>
+  </div>
+
+  <div class="reveal">
+    <p>"化学极乐"在群里出现了 31 次。它不再是一个散落的词，而是一套有品牌标识的话语体系。化学极乐百科⚛️，化学极乐之家，化学极乐TV🔯，太空极乐TV，化学极乐交流群——这些频道合计产生了 63 次转发引用。</p>
+    <p>2025 年 12 月 4 日，一位没有显示用户名的成员在群组中连续发送了多条消息，对群组中几个活跃角色进行了讽刺性的介绍："喜欢教唆他人吃化工原料，同时炒作引流拉黑别人一枚废物人，大家好啊我是chicken同是又是化学极乐百科wiki主"。虽然这条消息的语气是嘲讽的，但它也间接描述了"化学极乐百科"这个频道运营者的影响力——他在群组中具有辨识度和话语权。</p>
+    <p>十月七号，一位没有显示用户名的成员发了这样一段话："药物滥用简直就是一个乙游大世界💕🖤想要解离欣快，会耍药疯的有右美沙芬🖤💛想要讲话幽默不失风趣社交属性拉满有普瑞巴林💛💜如果想要我们的去抑制镇定还有BZDs与zdrug💜💗要我说你们药滥玩家吃的也真是太好了吧💘🎁今天我已经垂直入坑了🎉"。</p>
+  </div>
+
+  <!-- CHART 8 -->
+  <div class="chart-placeholder reveal">
+    <div class="chart-icon">🕸️</div>
+    <div class="chart-label">图表 8</div>
+    <div class="chart-title">外部生态网络</div>
+    <div class="chart-desc">
+      <strong>类型：网络关系图（Force-directed Graph）</strong><br>
+      中心节点：OverdoseWiki 群组。<br>
+      一级节点：<strong>化学极乐百科⚛️</strong>（22 次转发）、<strong>太空极乐TV</strong>（22 次）、化学极乐之家（12 次）、化学极乐交流群（6 次）、处方频道、开户频道、od-wiki.com、freeodwiki.org、overdose.day 等 35 个外部社群。<br>
+      连线粗细 = 转发引用次数。化学极乐系节点用紫色，处方/开户用红色，Wiki 用青色。
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">十</span></div>
+
+<!-- ==================== SECTION 十 ==================== -->
+<section class="section">
+  <div class="quote-block reveal">
+    <p>"2025.1.22 20:00
+14t安非他酮
+
+20:53 特别想吐，稍微有点晕，再坚持坚持吧
+20:59 心悸，耳鸣严重，听歌缓解
+21.12 感觉腿不由自主颤动，盘着腿弯腰坐在床上，出现幻触感觉床歪了
+21:15 轻微内幻，色块
+21:22 闭着眼睛看了一会儿内幻以后出现了外幻，看到面前有蜘蛛网，还能摸到，好像也会幻视虫子
+身上有点痒
+21:33 时间错乱，幻触身上痒，感觉嗓子被什么堵住了，听歌好像变调了
+21:37 放下手机不能盯着一个地方太久不然就有蜘蛛网一样的东西
+
+药效里我感觉时间特别特别慢，听歌也会变调变速，主要的身体副作用是严重的心悸、头晕、震颤抽搐、胃剧痛、复视、呼吸抑制，甚至昏迷
+我看到的幻觉有蜘蛛网结在了我面前，我伸手去摸还能摸到一层网。。还看到有一堆飞虫朝我飞过来，然后就会有那种身上落了东西的幻触
+后来看到屋子里下起了雪，那些网变成了一个一个大雪花飘向我，我甚至看到我的被子湿了，一摸也是湿的，但是我知道这一切都是幻觉
+一切东西都在扭曲变形发出彩色的光，黑暗里幻觉会更加明显，于是我就把整个屋子的灯都打开，我记得以前o这个看到过影子人就有点害怕
+后来那些网扑向我……"</p>
+    <div class="attr">——Alva，2026-02-06T23:57:07</div>
+  </div>
+
+  <div class="reveal">
+    <p>十月七号，用户"msh usd"说："上次o晚安出现了严重幻视幻听，看到听到一群人在骂我，最后把我逼到从楼上跳下去，不过还好是2楼没什么事"。</p>
+    <p>十二月二十七号，"夜羽 无霜"说："看衣柜上浮雕幻视人脸一直在说话，还听到了声音，是个老奶奶的声，但是具体说了什么听不清，眼前还有噪点并且视野四周看到暗角了"。</p>
+    <p>同一天，"洪"问："大佬们，我有个小小的问题想问问，，，o12t俞美到底有啥感觉啊？我只有晕，感觉身体轻盈，和喝酒的感觉很相似，其他的一切都没有呢"。另一位成员"u pucs"回答："先是想吐然后感觉很像普瑞巴林。再就是意识有点模糊，像是任务管理开手动了，做什么事情，就是什么人。反正就很诡异了，但不是badtrip"。</p>
+    <p>"洪"继续描述自己的体验："这个感觉就是身体不断陷进床里，对光敏感，看手机不能理解字，或看手机感觉像看纸，有点像ai生成的字的那种感觉，听觉非常非常灵敏，一切都很吵，很不舒服"。</p>
+    <p>药效副作用讨论类消息 3,005 条。</p>
+    <p>十月三号，"lxx"分享了一段药品说明书的信息："药品说明书上写的，医学剂量下加巴喷丁最多是1800mg，耐受2400mg，pr是300mg，耐受600mg"。这条消息传递了安全剂量范围，但它的隐含信息是——超过医学剂量才是 OD。而群组里绝大多数剂量分享本身就已经超过了医学剂量。</p>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">十一</span></div>
+
+<!-- ==================== SECTION 十一 ==================== -->
+<section class="section">
+  <div class="quote-block reveal">
+    <p>"回忆再次袭来，不断重复的一些画面。
+河边，桂花树，麻雀，下午，秋千，水果摊和螺蛳粉店，不繁华的街，偶尔人多的超市，不远不近的山...你吃着甜筒，阳光洒在你脸上，你的笑容像罂粟一样在我的血管里蔓延。
+我的毒怎么解？
+你沐浴在光明之中，黑暗侵入我的体内。"</p>
+    <div class="attr">——匿名用户，2025-10-03T23:59:56</div>
+  </div>
+
+  <div class="reveal">
+    <p>耐药性是个绕不开的问题。</p>
+    <p>九月二十七号，一位没有显示用户名的成员说："900mg普瑞巴林都没有太大效果了"。</p>
+    <p>十月十四号，"Zebulon Mika"说："主要现在耐药性有点太大了，我想着戒几天吧"。群友问："戒断反应难受啊"，他确认："是的难受死了"，"还会头疼又睡不着"。</p>
+    <p>十月十二号，"Shiina Rikka"说："先天 GABAA 高耐受怎么办"。然后："20mg 唑吡坦了怎么说，一点感觉没有"。再然后："75mg 安定也才睡了 3hr 不到"，"被 120 叫起来就没睡过了，被拉去洗了个胃"。75mg 地西泮，正常治疗剂量的 7 到 15 倍，只让他睡了不到三个小时。</p>
+    <p>剂量分享 2,206 条消息，含具体剂量单位的 2,313 条。这些密集的数字形成了一种隐性的竞赛机制——一个人看到另一个人吃 24t 才能"爽"，他可能直接从 24t 起步。</p>
+    <p>十二月二十九号，"Jennette Enya"分享了她的戒断方案："戒断期间！现在的量是减到2t pr加 3t替扎尼定！亲测有效，之前这样戒掉过快小半年！后面焦虑发作又吃上了！现在就是没有pr了😭😭"。"亲测有效"——戒断过程也变成了可以被推荐的经验。</p>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">十二</span></div>
+
+<!-- ==================== SECTION 十二 ==================== -->
+<section class="section">
+  <div class="reveal">
+    <p>群组经历过至少一次"清群"事件。成员们反复提到："之前的群炸了是吗"，"群炸了之后人好少呀"，"可惜了，群炸就159人了"，"这个群怎么老是被封"。</p>
+    <p>生存策略是一套完整的体系：频道备份——知识内容存储在独立频道，群被封了频道还在；多群冗余——同一运营者维护多个备用群；Wiki 外置——核心知识库托管在独立网站上；邀请链接和积分奖励机制拉新——"分享此链接邀请好友进群，好友成功进群后，您将获得1积分奖励"。</p>
+    <p>群内分享的 t.me 频道和群组链接涉及 35 个不同的外部社群，构成了一个松散但功能互补的网络。化学极乐系是最活跃的——化学极乐百科⚛️被转发 22 次，太空极乐TV被转发 22 次，化学极乐之家被转发 12 次，化学极乐交流群链接被分享 6 次。这个网络覆盖了知识、交易、处方、开户、社交等不同功能。</p>
+    <p>广州禁毒已经注意到了这个群组。群里有人转发消息说："广州禁毒新一期视频贴出本频道wiki了"。群组的反应是讨论"能不能看到"。</p>
+  </div>
+
+  <!-- CHART 9 -->
+  <div class="chart-placeholder reveal">
+    <div class="chart-icon">📈</div>
+    <div class="chart-label">图表 9</div>
+    <div class="chart-title">月度消息趋势与关键标签变化</div>
+    <div class="chart-desc">
+      <strong>类型：双 Y 轴组合图</strong>　X 轴 2025-09 至 2026-05。<br>
+      左 Y 轴 + 柱状：总消息量（9月 1,111 → 10月 12,742 → 4月<strong>16,824</strong>高峰）。<br>
+      右 Y 轴 + 折线：5 条关键标签趋势——<strong style="color:#e74c3c">处方_购药渠道</strong>（4月峰值 541）、<strong style="color:#f39c12">药品交易</strong>（4月峰值 360）、<strong style="color:#9b59b6">煽动_美化</strong>（4月峰值 509）、剂量分享、实时OD播报。<br>
+      标注 2026 年 4 月管控通知时间节点，展示管控后行为反而上升的矛盾。
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">十三</span></div>
+
+<!-- ==================== SECTION 十三 ==================== -->
+<section class="section">
+  <div class="quote-block reveal">
+    <p>"关于愈美和pr网络禁售的碎碎念
+
+右美和pr算是死完了，除线下购买已经无法获得。
+
+现在社区广泛讨论它们的替代品：
+
++ 右美是不可替代的。右美在 od 药物中是唯一副作用合理的解离剂，也是唯一副作用合理的致幻剂。
+
++ 现在已知两个加巴林有鼻吸活性，具体药效学还有待神人们测试。
+
+除此之外，还有许多不常见的精神物质被讨论，如侧柏酮、肉豆蔻醚等。不常见的物质不常见是有其原因的，其中大多数具有神经毒性。
+
+Q: od人员何去何从？
+A: 有以下四种可能：
+a) 转向酒精、尼古丁、咖啡因
+b) o副作用极大的od药品
+c) o有处方的精神药品
+d) 攒钱买策划药
+e) 抽麻"</p>
+    <div class="attr">——Mo MoMo，2026-04-22T22:27:16</div>
+  </div>
+
+  <div class="reveal">
+    <p>2026 年 3 月 14 日，群内转发了某省关于管控右美沙芬和普瑞巴林的官方通知："自 2026 年 4 月 1 日起，各药品零售企业严格管控含右美沙芬复方制剂、普瑞巴林销售行为。严格凭医师处方销售……单次销售不得超过5个最小包装"。</p>
+    <p>群组成员的反应是讨论如何绕过新规。</p>
+    <p>早在 2025 年 10 月 29 号，"桥桥💜"就说过："pxx我买药最近直接给我退掉了，官方强制退掉了都，啥意思，是不是最近查的严了不让买了"。平台管控在收紧，消息在群里传播，成员们的反应是寻找替代渠道。</p>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">十四</span></div>
+
+<!-- ==================== SECTION 十四 ==================== -->
+<section class="section">
+  <div class="reveal">
+    <p>群组最大的问题不是缺乏信息。恰恰是信息太多了。</p>
+    <p>2,206 条剂量分享，89 条 Wiki 引用，113 条长篇知识帖，构成了一套看似严谨的知识体系。但这套体系的"严谨"只覆盖了操作层面——怎么吃、吃多少、怎么搭配。对生命危险的讨论严重缺失。</p>
+    <p>143 条过量事件经历，昏迷 54 次，洗胃 30 次，进 ICU 14 次。几乎没有一条以"这很危险"为结论。过量经历被当作经验来传播——"洗胃不好受"，所以下次控制好剂量。导致洗胃的那个行为本身，没有被质疑。</p>
+    <p>群组没有一个可以问责的治理主体。群主几乎缺席，Bot 只管社交功能不管安全，Wiki 是匿名协作的没人负责内容，交易在私信完成群组声称只提供信息，各频道独立运营互不隶属。任何单一节点都可以说"我只是提供信息"。但当所有节点串联起来——知识、处方、购药、经验分享、新用户入门——形成了一条完整的通路，每个节点都在这条路上获得流量、声望或金钱，没有人对最终的结果负责。</p>
+  </div>
+</section>
+
+<div class="divider"><span class="section-num">十五</span></div>
+
+<!-- ==================== SECTION 十五 ==================== -->
+<section class="section">
+  <div class="reveal">
+    <p>十月三号深夜，一位成员写了一段话，以"深夜的孤寂早已把理智消磨得不剩分毫"开头，中间写到："回忆再次袭来，不断重复的一些画面。河边，桂花树，麻雀，下午，秋千，水果摊和螺蛳粉店，不繁华的街，偶尔人多的超市，不远不近的山..."。结尾是："记忆，焦虑，忧郁。呼呼做响的电风扇，滴滴答答的雨点，不知名的虫子在叫。还有从床头的烟灰缸里传来的熟悉的尼古丁和焦油混合着红星二锅头的味道，一缕一缕，若隐若现。点一根你最爱抽的炫赫门，过滤嘴是甜的，像你唇上的味道。忽然觉得一切都是幻境，我是一个无人知晓的幻影。只好用指甲深深得拼命掐着掌心，我急需一点存在感来安慰一下自己。没有痛楚，pr80的镇痛效果一向很好。我开始失忆，骗自己已经失忆。"。</p>
+    <p>七万多条消息里，这样的段落并不罕见。一个人在药物的作用下，把记忆里最细碎的画面写了出来——河边、桂花树、秋千——然后又回到药物本身。镇痛效果很好。开始失忆。骗自己已经失忆。</p>
+    <p>十月五号清晨，"komimoe🍥"发了那段关于精神崩溃的长消息后，最后一句是："谁可以帮帮我"。</p>
+    <p>十二月十号，两位不同的成员先后发了同一条消息："你继续od，继续熬夜，继续划拉小手，继续抽烟。我们肝肾心脑肺胃还有血小板跟着你，一点都不累，一点都不遭罪"。</p>
+    <p>七万多条消息，943 个发言者。有人正在服药，有人正在解离，有人正在求救，有人正在分享剂量，有人正在发布购买链接，有人正在撰写药理科普。它们同时出现在同一个聊天窗口里，上下滚动，无缝衔接。</p>
+  </div>
+</section>
+
+<!-- ==================== CONCLUSION ==================== -->
+<div class="fullwidth-section">
+  <div class="inner">
+    <h2 style="font-family:var(--font-serif);font-size:1.8rem;font-weight:700;border-left:3px solid var(--accent-amber);padding-left:1.2rem;margin-bottom:2rem;">结语：我们已经知道了什么</h2>
+
+    <div class="reveal">
+      <p>这个群组存在的这八个月，不是凭空出现的。它是在一个更大的背景下生长出来的。</p>
+
+      <h3>一、滚动的列管清单，和它追不上的速度</h3>
+      <p>过去几年，监管部门发挥了它该有的效果。2021 年 12 月，国家药监局将右美沙芬口服单方制剂由非处方药转换为处方药；2022 年 11 月，药品网络销售禁止清单（第一版）出台，右美沙芬单方制剂被列入禁止网络零售名单。</p>
+      <p>2023 年 2 月，国家药监局、公安部、国家邮政局等三部门联合下发通知，明确我国部分地区出现右美沙芬等五类药品的滥用问题，要求严格控制药品生产量，强化经营环节监管，加强寄递渠道查验。这是多部门第一次明确承认，这类药品的滥用已成规模性问题，且滥用人群以青少年为主。</p>
+      <p>2024 年 4 月，国家药监局、公安部、国家卫健委联合发布公告，自 2024 年 7 月 1 日起，将右美沙芬正式列入第二类精神药品目录。这意味着，右美沙芬单方制剂必须凭医师处方购买，药店须保存处方两年备查，并禁止向未成年人销售，违规销售最高可吊销许可证。</p>
+      <p>听上去，这条路正在被堵上，但群组的聊天记录告诉我们它没有。</p>
+      <p>右美沙芬被列管后，部分滥用者迅速转向愈美片等复方制剂获取药物——而愈美片不在列管范围内，不需要处方，八块钱一盒，仍可在各地药店随意购买。在群组里，"愈美"这个词从九月二十六日第一天起就频繁出现，从未消失过。</p>
+      <div class="footnote">愈美片不受列管的情况可参考：<a href="https://m.thepaper.cn/newsDetail_forward_30920178" target="_blank">澎湃新闻相关报道</a></div>
+      <p>这就是这类治理困境的结构：管住了一种，旁边的门还开着。国内买不到，去日本；日本买不到，找美国代购。群组里的跨境购药讨论涉及三大洲、多条线路。监管的边界是地理性的，而网络不是。</p>
+    </div>
+
+    <!-- CHART 10 -->
+    <div class="chart-placeholder reveal">
+      <div class="chart-icon">📈</div>
+      <div class="chart-label">图表 10</div>
+      <div class="chart-title">监管前后关键标签月度趋势</div>
+      <div class="chart-desc">
+        <strong>类型：多线折线图</strong>　X 轴 2025-09 至 2026-05，Y 轴消息数量。<br>
+        五条数据线：<strong style="color:#e74c3c">处方_购药渠道</strong>（4月峰值 541）、<strong style="color:#f39c12">药品交易</strong>（4月峰值 360）、<strong style="color:#9b59b6">煽动_美化</strong>（4月峰值 509）、剂量分享（4月峰值 397）、未成年相关（4月峰值 116）。<br>
+        标注三个政策时间节点：① 2021.12 右美转处方 ② 2024.07 右美列管 ③ 2026.04 某省管控通知。<br>
+        展示监管收紧后行为反而上升的趋势矛盾。
+      </div>
+    </div>
+
+    <div class="reveal">
+      <h3>二、知道问题的人，和问题本身的规模</h3>
+      <p>《2024年中国毒情形势报告》显示，截至 2024 年底，中国现有吸毒人员 74.7 万名，同比下降 16.7%，戒断三年未发现复吸人员 428.6 万名，同比上升 5.1%。传统毒品的数字在向好的方向走。</p>
+      <p>但同一份报告里，另一组数字的方向是反的。国内滥用物质种类发生结构性变化，麻精药品和未列管成瘾性物质滥用快速蔓延，滥用人数不断增多，青少年滥用问题突出。</p>
+      <p>2024 年查处 35 岁以下滥用麻精药品人数达 7.6 万人次，占查获滥用总人数的 86.4%；全年共发现滥用未列管成瘾性物质人数 4.9 万人次。</p>
+      <div class="footnote">
+        数据来源：<a href="https://www.mps.gov.cn/n2255079/n6865805/n7355741/n7355780/c10114656/content.html" target="_blank">公安部《2024年中国毒情形势报告》</a>；<a href="https://edu.ycwb.com/2025-06/24/content_53488241.htm" target="_blank">羊城晚报相关报道</a>
+      </div>
+      <p>这两条数字并列放在一起，意味着什么？传统毒品的流行正在被抑制，这是真实的成果；但另一批年轻人，正在通过药店和快递，以另一种路径滑入同样的处境。他们中的很多人，不觉得自己是"吸毒者"。他们买的是止咳药，是处方药，是网上搜得到的东西。这个认知距离，是治理的真正难点所在。</p>
+    </div>
+
+    <div class="reveal">
+      <h3>三、那些还没人管的地方</h3>
+      <p>这个群组里最难被任何法规触碰到的，不是剂量，不是购药渠道，而是两件事：</p>
+      <p>第一，是那个叫 od-wiki.com 的网站，和它背后的知识生产逻辑。用科学语言包装的用药指南，不是在贩卖毒品，不是在发布违禁信息——它只是在"分享知识"。现行法规对此几乎没有针对性条款。</p>
+      <p>第二，是群组里那 943 个人的共同处境。他们当中，有初中生，有高考前的少年，有凌晨两点崩溃发来"谁可以帮帮我"的人。青少年在青春发育期伴随焦虑、抑郁等情绪问题日益突出，而药物滥用往往成为他们寻求短暂解脱的一种方式。这句话在报告里只是一行背景说明，但在这七万条消息里，它是具体的面孔、具体的凌晨时间戳、具体的那句"反正对外的正常生活维持不了了"。</p>
+    </div>
+
+    <div class="reveal">
+      <h3>四、现实的路怎么走</h3>
+      <p>没有一条政策建议能单独解决这件事。但从这七万条消息里，可以归纳出几个方向：</p>
+      <p><strong>补上复方制剂的漏洞。</strong>右美沙芬单方制剂被列管之后，愈美片成了替代品，这个转移在几个月内就完成了。监管部门应当建立更快速的滥用预警—列管联动机制，不等问题规模化再响应。对于含有可滥用成分的复方制剂，应当明确每次销售限量，并对频繁、大量购买设置记录和预警机制。</p>
+      <p><strong>认真对待网络销售的灰色地带。</strong>群组里的处方造假、电商平台的境外代购、快递寄递渠道，形成了一条完整的替代供应链。公安机关已破获利用外卖平台非法贩卖右美沙芬的案件，这是好的信号，但应当形成常态化的跨部门协作机制，而不是单次专项行动。</p>
+      <div class="footnote">参考：<a href="https://www.chinanews.com.cn/gn/2025/02-28/10375505.shtml" target="_blank">中新网相关报道</a></div>
+      <p><strong>把"信息治理"纳入视野。</strong>仅靠封禁频道并不奏效——群组里置顶的那条公告已经证明了这一点：前管理员被警方调查，频道被封，但群组重建，继续运营。如何让平台对此类内容承担更明确的责任，包括自动检测危机信号并触发介入机制，是下一步的关键议题。</p>
+      <p><strong>把青少年心理健康的缺口当成入口，而不是后果。</strong>这些孩子在加入药物群组之前，经历了什么？家庭的关爱、心理压力的疏导、平等的对话，是防范青少年走上这条路的关键——这话说起来容易，但学校心理健康服务的覆盖率、可及性和实际有效性，与这一表述之间还有很长的距离。更现实的问题是：一个初中生在凌晨两点崩溃，他有没有一条打得通、不需要实名、不用害怕被送去矫正学校的求助电话？</p>
+      <div class="footnote">参考：<a href="https://sfj.beijing.gov.cn/sfj/sfdt/ywdt82/flfw93/543353395/index.html" target="_blank">北京市司法局相关页面</a></div>
+    </div>
+
+    <!-- CHART 11 -->
+    <div class="chart-placeholder reveal">
+      <div class="chart-icon">📊</div>
+      <div class="chart-label">图表 11</div>
+      <div class="chart-title">药物提及频次 TOP 15</div>
+      <div class="chart-desc">
+        <strong>类型：横向柱状图</strong><br>
+        Y 轴药物名称（按频次降序），X 轴提及次数。<br>
+        <strong>愈美(990)</strong>、<strong>普瑞(918)</strong>、右美(597)、思诺思(288)、安非他酮(194)、加巴喷丁(166)、金刚烷胺(159)、劳拉(107)、专注达(82)、苯乙胺(61)、唑吡坦(60)、哌甲酯(46)、苯海拉明(43)、司来吉兰(34)、地西泮(23)。<br>
+        用渐变色柱体，愈美和普瑞用深红色突出。作为结语前的数据总结，呼应全文。
+      </div>
+    </div>
+
+    <div class="reveal" style="margin-top:3rem;">
+      <p>九月二十七日傍晚六点四十三分，有人在群里发了两个字："救命"。</p>
+      <p>紧跟着的下一条消息，是另一个人问愈美片哪里买便宜。</p>
+      <p style="font-size:1.15rem;font-weight:500;color:var(--text-primary);margin:2rem 0;">"救命"被无缝接入了购药价格讨论。</p>
+      <p>这两条消息之间，有某种我们应该感到不安的东西。不只是群组的问题，是一个在凌晨崩溃的孩子往外看，能看到什么的问题。</p>
+      <p>他现在看到的，是这个群组。</p>
+      <p>这不是因为他不想活，而是因为除了这个群组，他不知道还有什么地方可以发出声音，可以不被挂掉电话，不被送进矫正学校，不被当成一个需要被管住的问题。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <p><strong>数据来源</strong>：OverdoseWiki Telegram 群组聊天记录分析，时间范围 2025 年 9 月 26 日至 2026 年 5 月 7 日，总消息量 74,434 条，发言人数 943 人。分类标注依据 OD 消息分类标注表 V2，共 18 个分类标签。</p>
+  <p style="margin-top:0.8rem;"><strong>数据采集</strong>：贺景隆、王博文　<strong>文字写作</strong>：贺景隆　<strong>数据分析</strong>：贺景隆、吴熙蕾　<strong>数据可视化</strong>：吴熙蕾、万知行</p>
+  <p style="margin-top:1.2rem;color:var(--text-muted);font-size:0.7rem;">本页面基于公开群组数据制作，旨在呈现药物滥用社群的信息生态与治理困境。</p>
+</footer>
+
+<script>
+// Progress bar
+const progressBar = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = (scrollTop / docHeight) * 100;
+  progressBar.style.width = progress + '%';
+});
+
+// Top nav
+const topNav = document.getElementById('topNav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > window.innerHeight * 0.5) {
+    topNav.classList.add('show');
+  } else {
+    topNav.classList.remove('show');
+  }
+});
+
+// Reveal on scroll
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+revealElements.forEach(el => revealObserver.observe(el));
+</script>
+
+</body>
+</html>
